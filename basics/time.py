@@ -23,8 +23,9 @@ class _GlobalTimer(metaclass=Singleton):
 
     @classmethod
     def toc(cls, flag_name: str = None) -> float:
+        end_time = time.time()
         flag_name = cls.checkflag(flag_name)
-        return time.time() - cls._dict_elapse_times[flag_name]
+        return end_time - cls._dict_elapse_times[flag_name]
 
 
 global_timer = _GlobalTimer()
