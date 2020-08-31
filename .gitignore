@@ -128,3 +128,4 @@ dmypy.json
 *.obj
 *.blend
 *.blend1
+*.ini
