@@ -1,6 +1,42 @@
 from configparser import ConfigParser
 
 
+class IniSection:
+    def __init__(self, section_dict):
+        self.__dict__.update(section_dict)
+
+    def __repr__(self):
+        result = '<{} on {}>\n'.format(type(self).__name__, id(self))
+        result += self.__str__()
+        result += '</{} on {}>\n'.format(type(self).__name__, id(self))
+        return result
+
+    def __str__(self):
+        result = ''
+        for option, value in self.__dict__.items():
+            result += '  {} = {}\n'.format(option, value)
+        return result
+
+
+class IniCont:
+    def __init__(self, cont_dict):
+        self.__dict__.update({section: IniSection(options)
+                              for section, options in cont_dict.items()})
+
+    def __repr__(self):
+        result = '<{} on {}>\n'.format(type(self).__name__, id(self))
+        result += self.__str__()
+        result += '</{} on {}>\n'.format(type(self).__name__, id(self))
+        return result
+
+    def __str__(self):
+        result = ''
+        for section, options in self.__dict__.items():
+            result += '[{}]\n'.format(section)
+            result += str(options)
+        return result
+
+
 def _to_config_format(obj) -> None or dict:
     sections = dict()
     if type(obj) is not dict:
@@ -37,16 +73,15 @@ def save_ini(obj, ini_path):
 def load_ini(ini_path):
     config = ConfigParser()
     config.read(ini_path)
-    return {
+    d = {
         section: {
             key: value
             for key, value in config.items(section)
         } for section in config.sections()
     }
+    return IniCont(d)
 
 
 if __name__ == '__main__':
-    print(load_ini("Config.ini"))
+    cont = load_ini("Config.ini")
     save_ini({"A": {1: 2}, "B": {"abd": 1325}}, "out.ini")
-
-
